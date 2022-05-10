@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -24,13 +24,12 @@ const Title = styled.h1`
   color: red;
 `;
 
-const Success = () => {
-  const locatiom = useLocation();
-  console.log(locatiom);
+const NotFound = () => {
   return (
     <Container>
       <Wrapper>
-        <Title>Payment Successfull !!!</Title>
+        <Title>Ooops...404</Title>
+        <Title>Page not found !!!</Title>
         <Link style={{ textDecoration: "none" }} to="/home">
           Click to go home page
         </Link>
@@ -39,4 +38,4 @@ const Success = () => {
   );
 };
 
-export default Success;
+export default NotFound;

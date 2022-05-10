@@ -7,6 +7,9 @@ import LOUNGWEAR from "../../Images/LOUNGWEAR.jpg";
 import shirt from "../../Images/shirt.jpg";
 import { Add, Remove } from "@material-ui/icons";
 import { mobile, desctop, tablet } from "../../Responsive";
+import { useSelector } from "react-redux";
+import { popularProducts } from "../../Data";
+import Pay from "../../components/Pay/Pay";
 
 const Container = styled.div``;
 const Wrapper = styled.div`
@@ -150,7 +153,8 @@ const CheckoutButton = styled.button`
   color: white;
 `;
 
-const CartSummery = ({ d }) => {
+const CartSummery = ({ d, cart, shipping, discount }) => {
+  const total = cart.total > 10 ? cart.total + shipping - discount : 0;
   return (
     <Summery device={d}>
       <SummeryTitle>ORDER SUMMERY</SummeryTitle>
@@ -158,33 +162,40 @@ const CartSummery = ({ d }) => {
         <SummeryItemText>
           <b>Subtotal : </b>
         </SummeryItemText>
-        <SummeryItemText> $100.00</SummeryItemText>
+        <SummeryItemText> $ {cart.total > 10 ? cart.total : 0}</SummeryItemText>
       </SummeryItem>
       <SummeryItem>
         <SummeryItemText>
           <b>Shipping : </b>
         </SummeryItemText>
-        <SummeryItemText> $5.99</SummeryItemText>
+        <SummeryItemText> ${cart.total > 10 ? shipping : 0}</SummeryItemText>
       </SummeryItem>
       <SummeryItem>
         <SummeryItemText>
           <b>Discount : </b>
         </SummeryItemText>
-        <SummeryItemText> $-3.00</SummeryItemText>
+        <SummeryItemText> $-{cart.total > 10 ? discount : 0}</SummeryItemText>
       </SummeryItem>
       <Hr />
       <SummeryItem>
         <SummeryItemText>
           <b>Total : </b>
         </SummeryItemText>
-        <SummeryItemText> $103.99</SummeryItemText>
+        <SummeryItemText> ${total}</SummeryItemText>
       </SummeryItem>
-      <CheckoutButton>CHECKOUT NOW</CheckoutButton>
+      <CheckoutButton>
+        <Pay total={total} />
+      </CheckoutButton>
     </Summery>
   );
 };
 
 const Cart = () => {
+  const cart = useSelector((state) => state.cart);
+  const shipping = 5.99;
+  const discount = 3.0;
+
+  console.log(cart);
   return (
     <Container>
       <Navbar />
@@ -194,73 +205,58 @@ const Cart = () => {
         <Top>
           <TopButton>CONTINUE SHOPPING</TopButton>
           <TopTexts>
-            <TopText>Shopping Bag (2)</TopText>
+            <TopText>Shopping Bag ({cart.quantity})</TopText>
             <TopText>Your WishList (0)</TopText>
           </TopTexts>
           <TopButton type="ckeck">CHECKOUT NOW</TopButton>
-          <CartSummery d="mobile" />
+          <CartSummery
+            d="mobile"
+            cart={cart}
+            shipping={shipping}
+            discount={discount}
+          />
         </Top>
         <Bottom>
           <Info>
-            <Product>
-              <ProductDetails>
-                <Image src={LOUNGWEAR} />
-                <Details>
-                  <ProductName>
-                    <b>Product : </b> Shirt
-                  </ProductName>
-                  <ProductId>
-                    <b>ID : </b> 124465325778
-                  </ProductId>
-                  <div style={{ display: "flex" }}>
-                    <b>Color : </b>
-                    <ProductColor color="gray" />
-                  </div>
-                  <ProductSize>
-                    <b>Size : </b> 37.5
-                  </ProductSize>
-                </Details>
-              </ProductDetails>
-              <PriceDetails>
-                <ProductAmountContainer>
-                  <Remove style={{ marginTop: "5px" }} />
-                  <ProductAmount>2</ProductAmount>
-                  <Add style={{ marginTop: "5px" }} />
-                </ProductAmountContainer>
-                <ProductPrice>$30</ProductPrice>
-              </PriceDetails>
-            </Product>
-            <Hr />
-            <Product>
-              <ProductDetails>
-                <Image src={shirt} />
-                <Details>
-                  <ProductName>
-                    <b>Product : </b> Shirt
-                  </ProductName>
-                  <ProductId>
-                    <b>ID : </b> 124465325779
-                  </ProductId>
-                  <div style={{ display: "flex" }}>
-                    <b>Color : </b>
-                    <ProductColor color="blue" />
-                  </div>
-                  <ProductSize>
-                    <b>Size : </b> 33.5
-                  </ProductSize>
-                </Details>
-              </ProductDetails>
-              <PriceDetails>
-                <ProductAmountContainer>
-                  <Remove style={{ marginTop: "5px" }} />
-                  <ProductAmount>5</ProductAmount>
-                  <Add style={{ marginTop: "5px" }} />
-                </ProductAmountContainer>
-                <ProductPrice>$33</ProductPrice>
-              </PriceDetails>
-            </Product>
+            {cart?.products.map((p, i) => {
+              return (
+                <Product key={i}>
+                  <ProductDetails>
+                    <Image src={popularProducts[i].image} />
+                    <Details>
+                      <ProductName>
+                        <b>Product : </b> {p.title}
+                      </ProductName>
+                      <ProductId>
+                        <b>ID : </b> {p._id}
+                      </ProductId>
+                      <div style={{ display: "flex" }}>
+                        <b>Color : </b>
+                        <ProductColor color={p.color} />
+                      </div>
+                      <ProductSize>
+                        <b>Size : </b> {p.size}
+                      </ProductSize>
+                    </Details>
+                  </ProductDetails>
+                  <PriceDetails>
+                    <ProductAmountContainer>
+                      <Remove style={{ marginTop: "5px" }} />
+                      <ProductAmount>{p.quantity}</ProductAmount>
+                      <Add style={{ marginTop: "5px" }} />
+                    </ProductAmountContainer>
+                    <ProductPrice>${p.price}</ProductPrice>
+                  </PriceDetails>
+                </Product>
+              );
+            })}
           </Info>
-          <CartSummery d="desctop" />
+          <CartSummery
+            d="desctop"
+            cart={cart}
+            shipping={shipping}
+            discount={discount}
+          />
         </Bottom>
       </Wrapper>
       <Footer />

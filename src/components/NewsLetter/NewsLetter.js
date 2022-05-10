@@ -3,7 +3,7 @@ import styled from "styled-components";
 import SendIcon from "@material-ui/icons/Send";
 
 const Container = styled.div`
-  height: 60vh;
+  height: 50vh;
   display: flex;
   flex-direction: column;
   justify-content: center;

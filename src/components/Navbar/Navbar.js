@@ -5,6 +5,9 @@ import { Badge } from "@material-ui/core";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import "./Navbar.css";
 import { mobile, desctop } from "../../Responsive";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import defaultUserImage from "../../Images/user.png";
 
 const Container = styled.div`
   height: 60px;
@@ -47,6 +50,7 @@ const SearchContainer = styled.div`
 const Input = styled.input`
   border: none;
   outline: none;
+  width: 90%;
   ${mobile({ fontSize: "10px" })};
 `;
 
@@ -59,16 +63,30 @@ const Right = styled.div`
 const MenuItem = styled.div`
   font-size: 14px;
   cursor: pointer;
-  margin-left: auto;
+  margin-left: 15px;
   ${desctop({ marginLeft: "25px", fontSize: "15px" })};
+  ${mobile({ marginLeft: "25px", fontSize: "15px" })};
+`;
+
+const ProfilePicture = styled.img`
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
 `;
 
 const Navbar = () => {
+  const quantity = useSelector((state) => state.cart.quantity);
+  const { currentUser: user } = useSelector((state) => state.user);
+
   return (
     <Container>
       <Wrapper>
         <Left>
-          <Brand>Querist</Brand>
+          <Brand>
+            <Link to="/" className="link">
+              Querist
+            </Link>
+          </Brand>
           <SearchContainer className="form-control">
             <SearchIcon style={{ color: "gray", fontSize: 30 }} />
             <Input placeholder="Search" />
@@ -76,11 +94,31 @@ const Navbar = () => {
         </Left>
 
         <Right>
-          <MenuItem>REGISTER</MenuItem>
-          <MenuItem>LOGIN</MenuItem>
+          {!user?.email && (
+            <MenuItem>
+              <Link to="/register" className="link">
+                REGISTER
+              </Link>
+            </MenuItem>
+          )}
+
           <MenuItem>
-            <Badge badgeContent={3} color="secondary">
-              <ShoppingCartIcon style={{ width: "25px" }} />
+            {!user?.email ? (
+              <Link to="/login" className="link">
+                LOGIN
+              </Link>
+            ) : (
+              <ProfilePicture
+                src={user?.image ? user.image : defaultUserImage}
+              />
+            )}
+          </MenuItem>
+
+          <MenuItem>
+            <Badge badgeContent={quantity} color="secondary">
+              <Link style={{ textDecoration: "none" }} to="/cart">
+                <ShoppingCartIcon style={{ width: "25px", color: "gray" }} />
+              </Link>
             </Badge>
           </MenuItem>
         </Right>

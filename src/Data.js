@@ -1,5 +1,3 @@
-// import me from "./Images/me1.jpg";
-import me from "./Images/me.png";
 import summer from "./Images/summer.jpg";
 import rainny from "./Images/rainny.jpg";
 import winter from "./Images/winter.jpg";
@@ -51,16 +49,19 @@ export const categories = [
     id: 1,
     image: shirt,
     title: "SHIRT STYLE!",
+    category: "women",
   },
   {
     id: 2,
     image: LOUNGWEAR,
     title: "LOUNGWEAR LOVE",
+    category: "coat",
   },
   {
     id: 3,
     image: JACKETS,
     title: "LIGHT JACKETS ",
+    category: "jeans",
   },
 ];
 

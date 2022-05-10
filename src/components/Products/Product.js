@@ -3,6 +3,7 @@ import styled from "styled-components";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import SearchIcon from "@material-ui/icons/Search";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
+import { Link } from "react-router-dom";
 
 const Info = styled.div`
   opacity: 0;
@@ -45,10 +46,10 @@ const Circle = styled.div`
 `;
 const Image = styled.img`
   width: 100%;
-  // max-width: 300px;
+  max-width: 250px;
   height: 75%;
   z-index: 2;
-  object-fit: cover;
+  // object-fit: cover;
 `;
 
 const Icon = styled.div`
@@ -67,17 +68,19 @@ const Icon = styled.div`
   }
 `;
 
-const Product = ({ item }) => {
+const Product = ({ item, image }) => {
   return (
     <Container>
       <Circle></Circle>
-      <Image src={item.image} />
+      <Image src={image} alt="missing product Image" />
       <Info>
         <Icon>
           <ShoppingCartIcon />
         </Icon>
         <Icon>
-          <SearchIcon />
+          <Link to={`/product/${item._id}`} className="link">
+            <SearchIcon />
+          </Link>
         </Icon>
         <Icon>
           <FavoriteBorderIcon />

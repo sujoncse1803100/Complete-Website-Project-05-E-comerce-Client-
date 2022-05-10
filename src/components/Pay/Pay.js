@@ -6,7 +6,7 @@ import axios from "axios";
 const KEY =
   "pk_test_51JunwYGtjqsSIbse5lIZ8yWlaR9qXOpomVp3rNXMbUK5RoJlvK1ItTRnTKxH817Ryu2HF9vV0cuVI9YFN3eDP0Cb00eTkOz9sQ";
 
-const Pay = () => {
+const Pay = ({ total }) => {
   const [stripeSToken, setStripeToken] = useState(null);
   const navigate = useNavigate();
 
@@ -21,16 +21,17 @@ const Pay = () => {
           "http://localhost:5000/api/checkout/payment",
           {
             tokenId: stripeSToken.id,
-            amount: 2000,
+            amount: total * 100,
           }
         );
-        res.data && navigate("/success");
+        console.log("payment", res.data);
+        res.data && navigate("/success", { data: res.data });
       } catch (err) {
         console.log(err);
       }
     };
     stripeSToken && makeRequest();
-  }, [setStripeToken]);
+  }, [stripeSToken, total, navigate]);
 
   return (
     <div>
@@ -40,11 +41,11 @@ const Pay = () => {
         billingAddress
         shippingAddress
         description="You have only $20"
-        amount={5000}
+        amount={total * 100}
         token={onToken}
         stripeKey={KEY}
       >
-        <button className="btn btn-primary">Payment</button>
+        CHECKOUT NOW
       </StripeCheckout>
     </div>
   );

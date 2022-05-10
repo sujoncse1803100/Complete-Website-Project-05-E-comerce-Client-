@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../redux/apiCalls";
 
 const Container = styled.div`
   width: 100hw;
@@ -41,6 +43,10 @@ const Input = styled.input`
   outline: none;
   padding: 7px 15px;
   border-radius: 10px;
+  &:makedisabled {
+    color: green;
+    corsur: not-allowed;
+  }
 `;
 
 const ButtonContainer = styled.div`
@@ -52,14 +58,47 @@ const Span = styled.span`
   color: white;
 `;
 
+const Error = styled.div`
+  color: red;
+  display: flex;
+  justify-content: flex-start;
+  text-align: left;
+`;
+
 const Login = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const { isFetching, error, currentUser } = useSelector((state) => state.user);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    login(dispatch, { email, password });
+  };
+
+  useEffect(() => {
+    currentUser && navigate("/");
+  }, [currentUser]);
+
   return (
     <Container>
       <Wrapper>
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <Title className="text-white">LOG INTO ACCOUNT</Title>
-          <Input type="email" required placeholder="Email" />
-          <Input type="password" required placeholder="Password" />
+          <Input
+            type="email"
+            required
+            placeholder="Email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            type="password"
+            required
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {error && <Error>Invalid email or Password</Error>}
           <ButtonContainer>
             <Input
               className="bg-danger text-white"
@@ -70,6 +109,7 @@ const Login = () => {
               className="bg-success text-white"
               type="submit"
               value="LOGIN"
+              makeDisabled={isFetching}
             />
           </ButtonContainer>
           <Span>

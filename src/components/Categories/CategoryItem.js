@@ -1,12 +1,15 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { mobile, tablet, desctop } from "../../Responsive";
 
 const Container = styled.div`
-  width: 100hw;
-  flex: 1;
+  // flex: 1;
   height: 70vh;
-  min-width: 250px;
+  width: 30.33%;
   position: relative;
+  margin: 5px;
+  ${tablet({ width: "100%", padding: "20px" })};
 `;
 const Image = styled.img`
   width: 100%;
@@ -41,11 +44,13 @@ const Button = styled.button`
 const CategoryItem = ({ item }) => {
   return (
     <Container>
-      <Image src={item.image} />
-      <Info>
-        <Title>{item.title}</Title>
-        <Button>SHOP NOW</Button>
-      </Info>
+      <Link to={`/products/${item.category}`} className="link">
+        <Image src={item.image} />
+        <Info>
+          <Title>{item.title}</Title>
+          <Button>SHOP NOW</Button>
+        </Info>
+      </Link>
     </Container>
   );
 };

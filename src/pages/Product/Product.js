@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Announcdment from "../../components/Announcement/Announcdment";
 import Footer from "../../components/Footer/Footer";
@@ -6,7 +6,11 @@ import NewsLetter from "../../components/NewsLetter/NewsLetter";
 import Navbar from "./../../components/Navbar/Navbar";
 import shirt from "../../Images/shirt.jpg";
 import { Add, Remove, ShoppingCart } from "@material-ui/icons";
-// import { ShoppingCart } from "@material-ui/icons/ShoppingCart";
+import { publicRepuest } from "../../ResponseMethod";
+import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { addProduct } from "../../redux/cartRedux";
+import { useDispatch } from "react-redux";
 
 const Container = styled.div``;
 const Wrapper = styled.div`
@@ -60,6 +64,7 @@ const FilterTitle = styled.span`
 const FilterColor = styled.div`
   width: 20px;
   height: 20px;
+  border: 1px solid gray;
   border-radius: 50%;
   margin: 5px 0px 5px 5px;
   background-color: ${(props) => props.color};
@@ -83,6 +88,7 @@ const AmountContainer = styled.div`
 `;
 const Icon = styled.div`
   padding-top: 5px;
+  cursor: pointer;
 `;
 
 const Amount = styled.div`
@@ -103,9 +109,45 @@ const Button = styled.button`
   min-width: 200px;
   background-color: white;
 `;
-// const FilterSizeOption = styled.option``;
 
 const Product = () => {
+  const locatiom = useLocation();
+  const id = locatiom.pathname.split("/")[2];
+  const [product, setProduct] = useState({});
+  const [quantity, setQuantity] = useState(1);
+  const [color, setColor] = useState("");
+  const [size, setSize] = useState("");
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    try {
+      const getProduct = async () => {
+        const res = await publicRepuest.get("/product/find/" + id);
+        setProduct(res.data);
+      };
+      getProduct();
+    } catch (err) {
+      console.log(err);
+    }
+  }, [id]);
+
+  const handleQuantity = (action) => {
+    if (action === "dec") {
+      quantity > 1 && setQuantity(quantity - 1);
+    } else if (action === "inc") {
+      setQuantity(quantity + 1);
+    }
+  };
+
+  const handleAddToCart = () => {
+    ///update product
+    dispatch(addProduct({ ...product, quantity, color, size }));
+  };
+
   return (
     <Container>
       <Navbar />
@@ -115,28 +157,22 @@ const Product = () => {
           <Image src={shirt} />
         </ImageContainer>
         <InfoContainer>
-          <Title>Stylish Bangladeshi Shirt</Title>
-          <Desc>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero
-            excepturi, assumenda nisi exercitationem ipsa ad suscipit
-            architecto?
-          </Desc>
-          <Price>$30</Price>
+          <Title>{product.title}</Title>
+          <Desc>{product.desc}</Desc>
+          <Price>${product.price}</Price>
           <FilterContainer>
             <Filter>
               <FilterTitle>Color</FilterTitle>
-              <FilterColor color="black" />
-              <FilterColor color="darkblue" />
-              <FilterColor color="gray" />
+              {product.color?.map((c, i) => (
+                <FilterColor key={i} color={c} onClick={() => setColor(c)} />
+              ))}
             </Filter>
             <Filter>
               <FilterTitle>Size</FilterTitle>
-              <FilterSize>
-                <FilterSizeOption>XS</FilterSizeOption>
-                <FilterSizeOption>S</FilterSizeOption>
-                <FilterSizeOption>M</FilterSizeOption>
-                <FilterSizeOption>L</FilterSizeOption>
-                <FilterSizeOption>XL</FilterSizeOption>
+              <FilterSize onChange={(e) => setSize(e.target.value)}>
+                {product.size?.map((s, i) => (
+                  <FilterSizeOption key={i}>{s}</FilterSizeOption>
+                ))}
               </FilterSize>
             </Filter>
           </FilterContainer>
@@ -144,14 +180,14 @@ const Product = () => {
           <AddContainer>
             <AmountContainer>
               <Icon>
-                <Remove />
+                <Remove onClick={() => handleQuantity("dec")} />
               </Icon>
-              <Amount>1</Amount>
+              <Amount>{quantity}</Amount>
               <Icon>
-                <Add />
+                <Add onClick={() => handleQuantity("inc")} />
               </Icon>
             </AmountContainer>
-            <Button>
+            <Button onClick={handleAddToCart}>
               <ShoppingCart /> Add to Cart
             </Button>
           </AddContainer>

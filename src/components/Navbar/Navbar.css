@@ -4,3 +4,8 @@
 .searchInput:focus {
   outline: none !important;
 }
+
+.link {
+  text-decoration: none;
+  color: gray;
+}
